@@ -1,0 +1,1 @@
+This project is centered on building a robust option pricing model using two different pricing models: Monte Carlo and Black Scholes methods. We will be implementing the Black Scholes PDE and its analytical solutions to determine the best European option price.
