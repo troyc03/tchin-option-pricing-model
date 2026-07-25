@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from scipy.stats import norm
 
 class EuropeanOptionModel:
-    """Class to price European options using numerical and analytical methods."""
+    """Class to price European options and compute Greeks using numerical and analytical methods."""
     
     def __init__(self, s0: float, k: float, t: float, r: float, sigma: float):
         self.s0 = s0
@@ -12,11 +12,29 @@ class EuropeanOptionModel:
         self.r = r
         self.sigma = sigma
 
-    def black_scholes_analytical(self) -> float:
-        """Calculates the exact closed-form Black-Scholes price for a Call option."""
+    def _calculate_d1_d2(self) -> tuple[float, float]:
+        """Helper method to calculate d1 and d2 components for Black-Scholes."""
         d1 = (np.log(self.s0 / self.k) + (self.r + 0.5 * self.sigma**2) * self.t) / (self.sigma * np.sqrt(self.t))
         d2 = d1 - self.sigma * np.sqrt(self.t)
+        return d1, d2
+
+    def black_scholes_analytical(self) -> float:
+        """Calculates the exact closed-form Black-Scholes price for a Call option."""
+        d1, d2 = self._calculate_d1_d2()
         return self.s0 * norm.cdf(d1) - self.k * np.exp(-self.r * self.t) * norm.cdf(d2)
+
+    def calculate_greeks(self) -> dict[str, float]:
+        """Calculates first and second-order Call option analytical Greeks."""
+        d1, d2 = self._calculate_d1_d2()
+        sqrt_t = np.sqrt(self.t)
+        
+        delta = norm.cdf(d1)
+        gamma = norm.pdf(d1) / (self.s0 * self.sigma * sqrt_t)
+        vega = (self.s0 * norm.pdf(d1) * sqrt_t) / 100
+        theta = (- (self.s0 * norm.pdf(d1) * self.sigma) / (2 * sqrt_t) - self.r * self.k * np.exp(-self.r * self.t) * norm.cdf(d2)) / 365
+        rho = (self.k * self.t * np.exp(-self.r * self.t) * norm.cdf(d2)) / 100
+        
+        return {'delta': delta, 'gamma': gamma, 'vega': vega, 'theta': theta, 'rho': rho}
 
     def black_scholes_pde(self, s_max: float, nx: int) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Solves Black-Scholes PDE using an explicitly stabilized finite difference scheme."""
@@ -67,8 +85,9 @@ def main():
     s0, k, t, r, sigma = 100.0, 100.0, 0.5, 0.05, 0.2
     model = EuropeanOptionModel(s0=s0, k=k, t=t, r=r, sigma=sigma)
     
-    # 1. Analytical Evaluation
+    # 1. Analytical Evaluation & Greeks
     bs_analytical_price = model.black_scholes_analytical()
+    greeks = model.calculate_greeks()
 
     # 2. PDE Numerical Evaluation
     s_max, nx = 200.0, 200
@@ -88,6 +107,9 @@ def main():
     print(f"Black-Scholes Analytical Option Price:  {bs_analytical_price:.4f}")
     print(f"Black-Scholes Numerical Option Price:   {bs_numerical_price:.4f}")
     print(f"Monte Carlo Option Price:        {mc_val:.4f} ± {std_err:.4f}")
+    print("\n--- Analytical Option Greeks ---")
+    for greek, val in greeks.items():
+        print(f"{greek.capitalize():<6}: {val:.4f}")
 
     # Plotting code remains identical
     fig = plt.figure(figsize=(15, 6))
