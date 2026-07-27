@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import norm
 
-class EuropeanOptionModel:
+class CallOptionModel:
     """Class to price European options and compute Greeks using numerical and analytical methods."""
     
     def __init__(self, s0: float, k: float, t: float, r: float, sigma: float):
@@ -83,7 +83,7 @@ class EuropeanOptionModel:
 
 def main():
     s0, k, t, r, sigma = 100.0, 100.0, 0.5, 0.05, 0.2
-    model = EuropeanOptionModel(s0=s0, k=k, t=t, r=r, sigma=sigma)
+    model = CallOptionModel(s0=s0, k=k, t=t, r=r, sigma=sigma)
     
     # 1. Analytical Evaluation & Greeks
     bs_analytical_price = model.black_scholes_analytical()
@@ -104,9 +104,9 @@ def main():
     time_grid = np.linspace(0, t, m + 1)
 
     # Terminal Outputs
-    print(f"Black-Scholes Analytical Option Price:  {bs_analytical_price:.4f}")
-    print(f"Black-Scholes Numerical Option Price:   {bs_numerical_price:.4f}")
-    print(f"Monte Carlo Option Price:        {mc_val:.4f} ± {std_err:.4f}")
+    print(f"Black-Scholes Analytical Call Option Price:  {bs_analytical_price:.4f}")
+    print(f"Black-Scholes Numerical Call Option Price:   {bs_numerical_price:.4f}")
+    print(f"Monte Carlo Call Option Price:        {mc_val:.4f} ± {std_err:.4f}")
     print("\n--- Analytical Option Greeks ---")
     for greek, val in greeks.items():
         print(f"{greek.capitalize():<6}: {val:.4f}")
@@ -115,7 +115,7 @@ def main():
     fig = plt.figure(figsize=(15, 6))
     ax1 = fig.add_subplot(121, projection='3d')
     surf = ax1.plot_surface(T, S_mesh, V.T, cmap='viridis', edgecolor='none')
-    ax1.set_title('Black-Scholes Option Price Surface')
+    ax1.set_title('Black-Scholes Call Option Price Surface')
     ax1.set_xlabel('Time to Maturity ($T$)')
     ax1.set_ylabel('Stock Price ($S$)')
     ax1.set_zlabel('Option Price ($V$)')
