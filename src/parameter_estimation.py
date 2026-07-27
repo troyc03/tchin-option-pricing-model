@@ -51,7 +51,6 @@ def run_mcmc_inverse(log_returns: np.ndarray, dt: float, iterations=20000, burn_
     return chain_r, chain_sigma
 
 if __name__ == '__main__':
-    # 1. RUN YOUR EXACT SIMULATION CODE
     np.random.seed(42) 
     true_r, true_sigma, t_max, n_steps = 0.05, 0.20, 2.0, 504
     dt_step = t_max / n_steps
