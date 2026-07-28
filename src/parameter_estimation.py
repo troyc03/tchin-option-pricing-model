@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 import scipy.stats as stats
 
 def param_estimation(prices: np.ndarray, dt: float):
-    # Your original estimation logic preserved exactly
     log_returns = np.log(prices[1:] / prices[:-1])
     sample_std = np.std(log_returns, ddof=1)
     sigma_est = sample_std / np.sqrt(dt)
