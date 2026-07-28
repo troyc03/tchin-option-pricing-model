@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         # Changed to 3.10 and 3.11 to match your code's stability requirements
-        python-version: ["3.10", "3.11"]
+        python-version: ["3.13", "3.14"]
 
     steps:
     - uses: actions/checkout@v4
