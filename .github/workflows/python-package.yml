@@ -27,11 +27,11 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install flake8 pytest
-        # Checks if file exists and has size greater than 0; falls back to explicit installs
+        # Explicitly adds matplotlib to ensure the test suite imports pass
         if [ -s requirements.txt ]; then 
           pip install -r requirements.txt
         else 
-          pip install numpy scipy
+          pip install numpy scipy matplotlib
         fi
 
     # Rest of your linting and testing steps remain the same
